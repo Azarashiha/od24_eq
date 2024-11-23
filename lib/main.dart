@@ -3,9 +3,20 @@ import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 import 'screens/map_screen.dart';
 import 'screens/settings_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
+
+  String accessToken = dotenv.get('MAPBOX_ACCESS_TOKEN');
+  print('Mapbox Access Token: $accessToken');
+
+  // Mapboxのアクセストークンを初期化
+  MapboxOptions.setAccessToken(accessToken);
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -14,7 +25,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Flutter Map Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
@@ -32,11 +43,11 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1; // デフォルトでMapScreenを表示
 
   static const List<Widget> _screens = <Widget>[
     HomeScreen(),
-    MapScreen(),
+    MapScreen(), // ここでMapScreenを使用
     SettingsScreen(),
   ];
 
@@ -44,6 +55,19 @@ class _MainPageState extends State<MainPage> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  String _getTitle(int index) {
+    switch (index) {
+      case 0:
+        return 'Home';
+      case 1:
+        return 'Map';
+      case 2:
+        return 'Settings';
+      default:
+        return 'Flutter Demo';
+    }
   }
 
   @override
@@ -74,18 +98,5 @@ class _MainPageState extends State<MainPage> {
         onTap: _onItemTapped,
       ),
     );
-  }
-
-  String _getTitle(int index) {
-    switch (index) {
-      case 0:
-        return 'Home';
-      case 1:
-        return 'Map';
-      case 2:
-        return 'Settings';
-      default:
-        return 'Flutter Demo';
-    }
   }
 }
