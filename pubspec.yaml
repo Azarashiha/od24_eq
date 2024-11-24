@@ -39,6 +39,7 @@ dependencies:
   permission_handler: ^11.3.1
   mapbox_maps_flutter: ^2.4.1
   flutter_dotenv: ^5.2.1
+  web_socket_channel: ^3.0.1
 
 dev_dependencies:
   flutter_test:
